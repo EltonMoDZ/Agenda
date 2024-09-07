@@ -1,71 +1,56 @@
 package util;
 
+import java.util.ArrayList;
+import java.util.Scanner;
+
 public class Agenda {
-    private final String[][] contatos = new String[1][3];
+    ArrayList<Contato> contatos = new ArrayList<>();
+    Scanner sc = new Scanner(System.in);
 
-    public void adicionar(String nome, String email, String telefone) {
-        int indice = buscarNovoIndice();
-        if (indice < 0 || indice >= contatos.length) {
-            System.out.println("Agenda cheia");
-            return;
-        }
-        contatos[indice][0] = nome;
-        contatos[indice][1] = email;
-        contatos[indice][2] = telefone;
-        System.out.println("Novo contato adicionado com sucesso");
-        System.out.println();
+    public Agenda() {
+        menuOpcoes();
     }
 
-    public boolean verificarTelefoneExistente(String telefone) {
-        for (String[] contato : contatos) {
-            if (contato[2] != null && contato[2].equals(telefone)) return true;
-        }
-        return false;
-    }
-
-    public void remover(int contato) {
-        contato--;
-        if (contato < 0 || contato >= contatos.length || contatos[contato][0] == null) {
-            System.out.println("Índice fora dos limites do array ou não existe");
-            return;
-        }
-
-        contatos[contato][0] = null;
-        contatos[contato][1] = null;
-        contatos[contato][2] = null;
-
-        for (int i = contato; i < contatos.length - 1; i++) {
-            if (contatos[i + 1][0] != null) {
-                contatos[i][0] = contatos[i + 1][0];
-                contatos[i][1] = contatos[i + 1][1];
-                contatos[i][2] = contatos[i + 1][2];
-                contatos[i + 1][0] = null;
-                contatos[i + 1][1] = null;
-                contatos[i + 1][2] = null;
-            } else {
-                break;
+    private void menuOpcoes() {
+        int opcao;
+        do {
+            menu();
+            opcao = sc.nextInt();
+            sc.nextLine();
+            switch (opcao) {
+                case 1:
+                    Menu.ADICIONAR.criarNovoContato(sc, contatos);
+                    break;
+                case 2:
+                    Menu.DETALHAR.listar(sc, contatos);
+                    break;
+                case 3:
+                    Menu.EDITAR.editarContato(sc, contatos);
+                    break;
+                case 4:
+                    Menu.REMOVER.removerContato(sc, contatos);
+                    break;
+                case 5:
+                    Menu.SAIR.sair();
+                    break;
+                default:
+                    continue;
             }
-        }
-        System.out.println("Contato removido");
-        System.out.println();
+        } while (opcao != 5);
     }
 
-    public String[] listar() {
-        String[] lista = new String[contatos.length];
-        for (int i = 0; i < contatos.length; i++) {
-            if (contatos[i][0] != null) {
-                lista[i] = i + 1 + ": " + contatos[i][0] + " - " + contatos[i][1] + " - " + contatos[i][2];
-            }
+    private void menu() {
+        System.out.println("######");
+        System.out.println("AGENDA");
+        System.out.println("######");
+        int i = 1;
+        System.out.println(">>>> Contatos <<<<");
+        System.out.println("Selecione a opcão desejada!!");
+        for (Menu opcao : Menu.values()) {
+            System.out.println(i + " " + "-" + " " + opcao.name());
+            i++;
         }
-        return lista;
+
     }
 
-    private int buscarNovoIndice() {
-        for (int i = 0; i < contatos.length; i++) {
-            if (contatos[i][0] == null) {
-                return i;
-            }
-        }
-        return -1;
-    }
 }
